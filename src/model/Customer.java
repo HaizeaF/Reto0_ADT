@@ -5,13 +5,14 @@
  */
 package model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  *
  * @author 2dam
  */
-public class Customer {
+public class Customer implements Serializable{
     private Integer customer_id;
     private String firstName;
     private String lastName;
