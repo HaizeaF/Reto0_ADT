@@ -5,6 +5,7 @@
  */
 package controller;
 
+import exception.ExceptionManager;
 import java.util.HashMap;
 import model.Account;
 import model.Customer;
@@ -15,13 +16,13 @@ import model.Movement;
  * @author 2dam
  */
 public interface ModelInterface {
-    public void CreateCustomer(Customer c);
-    public Customer CheckCustomer(Integer idc);
-    public void CreateAccount(Account a, Integer idc);
-    public void AddClient(Integer idc, Integer ida);
-    public Account CheckAccount(Integer idc);
-    public void AccountMovement(Integer ida, Movement m);
-    public HashMap<Integer, Movement> CheckAccount_Movement(Integer ida);
+    public void CreateCustomer(Customer c)throws ExceptionManager;
+    public Customer CheckCustomer(Integer idc)throws ExceptionManager;
+    public void CreateAccount(Account a, Integer idc)throws ExceptionManager;
+    public void AddClient(Integer idc, Integer ida)throws ExceptionManager;
+    public Account CheckAccount(Integer idc)throws ExceptionManager;
+    public void AccountMovement(Integer ida, Movement m)throws ExceptionManager;
+    public HashMap<Integer, Movement> CheckAccount_Movement(Integer ida)throws ExceptionManager;
     
     
 }
