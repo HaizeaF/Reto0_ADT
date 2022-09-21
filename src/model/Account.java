@@ -7,6 +7,7 @@ package model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 /**
@@ -20,7 +21,7 @@ public class Account implements Serializable {
     private Float balance;
     private Float creditLine;
     private Float beginBalance;
-    private LocalDate beginBalanceTimestamp;
+    private LocalDateTime beginBalanceTimestamp;
     private AccountType type;
     private HashMap<Integer,Customer> customers;
     
@@ -28,7 +29,7 @@ public class Account implements Serializable {
     public Account() {
     }
 
-    public Account(Integer account_id, String description, Float balance, Float creditLine, Float beginBalance, LocalDate beginBalanceTimestamp, AccountType type, HashMap<Integer, Customer> customers) {
+    public Account(Integer account_id, String description, Float balance, Float creditLine, Float beginBalance, LocalDateTime beginBalanceTimestamp, AccountType type, HashMap<Integer, Customer> customers) {
         this.account_id = account_id;
         this.description = description;
         this.balance = balance;
@@ -80,11 +81,11 @@ public class Account implements Serializable {
         this.beginBalance = beginBalance;
     }
 
-    public LocalDate getBeginBalanceTimestamp() {
+    public LocalDateTime getBeginBalanceTimestamp() {
         return beginBalanceTimestamp;
     }
 
-    public void setBeginBalanceTimestamp(LocalDate beginBalanceTimestamp) {
+    public void setBeginBalanceTimestamp(LocalDateTime beginBalanceTimestamp) {
         this.beginBalanceTimestamp = beginBalanceTimestamp;
     }
 

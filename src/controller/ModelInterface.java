@@ -18,7 +18,7 @@ import model.Movement;
 public interface ModelInterface {
     public void CreateCustomer(Customer c)throws ExceptionManager;
     public Customer CheckCustomer(Integer idc)throws ExceptionManager;
-    public void CreateAccount(Account a, Integer idc)throws ExceptionManager;
+    public void CreateAccount(Account a)throws ExceptionManager;
     public void AddClient(Integer idc, Integer ida)throws ExceptionManager;
     public Account CheckAccount(Integer idc)throws ExceptionManager;
     public void AccountMovement(Integer ida, Movement m)throws ExceptionManager;

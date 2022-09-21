@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -108,18 +109,87 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public void CreateAccount(Account a, Integer idc) throws ExceptionManager{
-
+    public void CreateAccount(Account a) throws ExceptionManager{
+        con = connection.openConnection();
+        String insertAccount = "insert into account(?,?,?,?,?,?,?)";
+        
+        try {
+            stmt = con.prepareStatement(insertAccount);
+            stmt.setInt(1, a.getAccount_id());
+            stmt.setFloat(2, a.getBalance());
+            stmt.setFloat(3, a.getBeginBalance());
+            Timestamp ts = Timestamp.valueOf(a.getBeginBalanceTimestamp());
+            stmt.setTimestamp(4, ts);
+            stmt.setFloat(5, a.getCreditLine());
+            stmt.setString(6, a.getDescription());
+            stmt.setInt(7, Integer.valueOf(String.valueOf(a.getType())));
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+           String error = "Error en la conexion con la base de datos";
+            ExceptionManager exception = new ExceptionManager(error);
+            throw exception;
+        } finally {
+            try {
+                connection.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                String error = "Error al cerrar la base de datos";
+                ExceptionManager exception = new ExceptionManager(error);
+                throw exception;
+            }
+        }
     }
 
     @Override
     public void AddClient(Integer idc, Integer ida) throws ExceptionManager{
-
+        con = connection.openConnection();
+        String addClient = "insert into customer_account values (?,?)";
+        
+        try {
+            stmt = con.prepareStatement(addClient);
+            stmt.setInt(1, idc);
+            stmt.setInt(2, ida);
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+           String error = "Error en la conexion con la base de datos";
+            ExceptionManager exception = new ExceptionManager(error);
+            throw exception;
+        } finally {
+            try {
+                connection.closeConnection(stmt, con);
+            } catch (SQLException e) {
+                String error = "Error al cerrar la base de datos";
+                ExceptionManager exception = new ExceptionManager(error);
+                throw exception;
+            }
+        }
     }
 
     @Override
     public Account CheckAccount(Integer idc) throws ExceptionManager{
-
+        ResultSet rs = null;
+        Account account = null;
+        HashMap<Integer, Account> accounts = new HashMap<>();
+        
+        con = connection.openConnection();
+        String checkAccount = "SELECT a.* FROM account a, customer_account ca WHERE a.id=ca.accounts_id and ca.customers_id=?";
+        
+        try {
+            stmt = con.prepareStatement(checkAccount);
+            stmt.setInt(1, idc);
+            rs = stmt.executeQuery();
+            
+            while(rs.next()){
+                account = new Account();
+                account.setAccount_id(rs.getInt("id"));
+                account.setBalance(rs.getFloat("balance"));
+                account.setBeginBalance(rs.getFloat("beginBalance"));
+                account.setBeginBalanceTimestamp(LocalDateTime.valueOf(rs.getTimestamp("beginBalanceTimesamp")));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ModelDBImplementation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return account;
     }
 
     @Override
