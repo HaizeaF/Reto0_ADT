@@ -31,10 +31,10 @@ public class ModelFileImplementation implements ModelInterface {
     FileInputStream fis = null;
 
     @Override
-    public void CreateCustomer(Customer c) {
+    public void createCustomer(Customer c) {
 
         if (customersFile.exists()) {
-            if (CheckCustomer(c.getCustomer_id()) == null) {
+            if (checkCustomer(c.getCustomer_id()) == null) {
 
                 try {
 
@@ -85,7 +85,7 @@ public class ModelFileImplementation implements ModelInterface {
     }
 
     @Override
-    public Customer CheckCustomer(Integer idc) {
+    public Customer checkCustomer(Integer idc) {
 
         Customer customer = null;
 
@@ -127,17 +127,45 @@ public class ModelFileImplementation implements ModelInterface {
     }
 
     @Override
-    public void CreateAccount(Account a, Integer idc) {
+    public void createAccount(Account a, Integer idc) {
+        if (checkCustomer(idc) != null) {
+            HashMap<Integer,Customer> customersList;
+            Customer customer = checkCustomer(idc);
+            customersList = a.getCustomers();
+            customersList.put(idc, customer);
+            a.setCustomers(customersList);
+            if (accountFile.exists()) {
+                if (checkAccounts(idc).get(a.getAccount_id()) == null) {
 
-        if (accountFile.exists()) {
-            if (CheckCustomer(a.getAccount_id()) == null) {
+                    try {
 
+                        fos = new FileOutputStream(accountFile);
+                        moos = new MyObjectOutputStream(fos);
+
+                        moos.writeObject(a);
+
+                    } catch (FileNotFoundException ex) {
+
+                    } catch (IOException ex) {
+
+                    } finally {
+                        try {
+                        fos.close();
+                        moos.close();
+                        } catch (IOException ex) {
+
+                        }
+                    }
+                } else {
+                    System.out.println("Account exist");
+                }
+
+            } else {
                 try {
 
                     fos = new FileOutputStream(accountFile);
-                    moos = new MyObjectOutputStream(fos);
-
-                    moos.writeObject(a);
+                    oos = new ObjectOutputStream(oos);
+                    oos.writeObject(a);
 
                 } catch (FileNotFoundException ex) {
 
@@ -147,56 +175,64 @@ public class ModelFileImplementation implements ModelInterface {
 
                 try {
                     fos.close();
-                    moos.close();
+                    oos.close();
                 } catch (IOException ex) {
 
                 }
-
-            } else {
-                System.out.println("VACIO");
             }
-
-        } else {
+            
             try {
-
-                fos = new FileOutputStream(accountFile);
-                oos = new ObjectOutputStream(oos);
-
-                oos.writeObject(a);
-
+                fos = new FileOutputStream(customersFile);
+                moos = new MyObjectOutputStream(fos);
+                
+                HashMap<Integer,Account> accountsList = customer.getAccounts();
+                accountsList.put(a.getAccount_id(), a);
+                customer.setAccounts(accountsList);
             } catch (FileNotFoundException ex) {
-
+                ex.getMessage();
             } catch (IOException ex) {
-
+                ex.getMessage();
+            } finally {
+                try {
+                    fos.close();
+                    moos.close();
+                } catch (IOException ex) {
+                    ex.getMessage();
+                }
             }
-
-            try {
-                fos.close();
-                oos.close();
-            } catch (IOException ex) {
-
-            }
+        } else {
+            System.out.println("No customer");
         }
 
     }
 
     @Override
-    public void AddClient(Integer idc, Integer ida) {
-        
+    public void addClient(Integer idc, Integer ida) {
+        if (customersFile.exists() && accountFile.exists()) {
+            if (checkCustomer(idc) != null && checkAccount(ida) != null) {
+                if (checkAccounts(idc).get(ida) == null) {
+                    
+                } else {
+                    System.out.println("Client exist in Account");
+                }
+            }
+        } else {
+            System.out.println("No file");
+        }
     }
 
     @Override
-    public Account CheckAccount(Integer idc) {
+    public HashMap<Integer,Account> checkAccounts(Integer ida) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void AccountMovement(Integer ida, Movement m) {
+    public void accountMovement(Integer ida, Movement m) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public HashMap<Integer, Movement> CheckAccount_Movement(Integer ida) {
+    public HashMap<Integer, Movement> checkAccount_Movement(Integer ida) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -231,6 +267,11 @@ public class ModelFileImplementation implements ModelInterface {
             }
         }
         return cont;
+    }
+
+    @Override
+    public Account checkAccount(Integer ida) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

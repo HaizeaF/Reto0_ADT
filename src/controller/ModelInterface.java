@@ -15,13 +15,12 @@ import model.Movement;
  * @author 2dam
  */
 public interface ModelInterface {
-    public void CreateCustomer(Customer c);
-    public Customer CheckCustomer(Integer idc);
-    public void CreateAccount(Account a, Integer idc);
-    public void AddClient(Integer idc, Integer ida);
-    public Account CheckAccount(Integer idc);
-    public void AccountMovement(Integer ida, Movement m);
-    public HashMap<Integer, Movement> CheckAccount_Movement(Integer ida);
-    
-    
+    public void createCustomer(Customer c);
+    public Customer checkCustomer(Integer idc);
+    public void createAccount(Account a, Integer idc);
+    public void addClient(Integer idc, Integer ida);
+    public HashMap<Integer, Account> checkAccounts(Integer idc);
+    public void accountMovement(Integer ida, Movement m);
+    public Account checkAccount(Integer ida);
+    public HashMap<Integer, Movement> checkAccount_Movement(Integer ida);
 }
