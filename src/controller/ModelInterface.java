@@ -16,13 +16,14 @@ import model.Movement;
  * @author 2dam
  */
 public interface ModelInterface {
-    public void CreateCustomer(Customer c)throws ExceptionManager;
-    public Customer CheckCustomer(Integer idc)throws ExceptionManager;
-    public void CreateAccount(Account a)throws ExceptionManager;
-    public void AddClient(Integer idc, Integer ida)throws ExceptionManager;
-    public Account CheckAccount(Integer idc)throws ExceptionManager;
-    public void AccountMovement(Integer ida, Movement m)throws ExceptionManager;
-    public HashMap<Integer, Movement> CheckAccount_Movement(Integer ida)throws ExceptionManager;
+    public void createCustomer(Customer c)throws ExceptionManager;
+    public Customer checkCustomer(Integer idc)throws ExceptionManager;
+    public void createAccount(Account a, Integer idc)throws ExceptionManager;
+    public void addClient(Integer idc, Integer ida)throws ExceptionManager;
+    public HashMap<Integer, Account> checkAccounts(Integer idc)throws ExceptionManager;
+    public void accountMovement(Integer ida, Movement m)throws ExceptionManager;
+    public Account checkAccount(Integer ida) throws ExceptionManager;
+    public HashMap<Integer, Movement> checkAccount_Movement(Integer ida)throws ExceptionManager;
     
     
 }

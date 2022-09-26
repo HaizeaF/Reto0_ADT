@@ -11,10 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Account;
+import model.AccountType;
 import model.Customer;
 import model.Movement;
 
@@ -29,7 +31,7 @@ public class ModelDBImplementation implements ModelInterface {
     private ConnectionOpenClose connection = new ConnectionOpenClose();
 
     @Override
-    public void CreateCustomer(Customer c) throws ExceptionManager {
+    public void createCustomer(Customer c) throws ExceptionManager {
         con = connection.openConnection();
         String insertCustomer = "insert into customer(?,?,?,?,?,?,?,?,?,?)";
 
@@ -64,7 +66,7 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public Customer CheckCustomer(Integer idc) throws ExceptionManager{
+    public Customer checkCustomer(Integer idc) throws ExceptionManager{
         ResultSet rs = null;
         Customer customer = null;
         
@@ -109,7 +111,7 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public void CreateAccount(Account a) throws ExceptionManager{
+    public void createAccount(Account a, Integer idc) throws ExceptionManager{
         con = connection.openConnection();
         String insertAccount = "insert into account(?,?,?,?,?,?,?)";
         
@@ -130,7 +132,11 @@ public class ModelDBImplementation implements ModelInterface {
             throw exception;
         } finally {
             try {
-                connection.closeConnection(stmt, con);
+                String insertCustomerAccount = "insert into customer_account(?,?)";
+                stmt = con.prepareStatement(insertCustomerAccount);
+                stmt.setInt(1, a.getAccount_id());
+                stmt.setInt(2, idc);
+                connection.closeConnection(stmt, con); 
             } catch (SQLException e) {
                 String error = "Error al cerrar la base de datos";
                 ExceptionManager exception = new ExceptionManager(error);
@@ -140,7 +146,7 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public void AddClient(Integer idc, Integer ida) throws ExceptionManager{
+    public void addClient(Integer idc, Integer ida) throws ExceptionManager{
         con = connection.openConnection();
         String addClient = "insert into customer_account values (?,?)";
         
@@ -165,7 +171,7 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public Account CheckAccount(Integer idc) throws ExceptionManager{
+    public HashMap<Integer, Account> checkAccounts(Integer idc) throws ExceptionManager{
         ResultSet rs = null;
         Account account = null;
         HashMap<Integer, Account> accounts = new HashMap<>();
@@ -181,25 +187,59 @@ public class ModelDBImplementation implements ModelInterface {
             while(rs.next()){
                 account = new Account();
                 account.setAccount_id(rs.getInt("id"));
+                account.setDescription(rs.getString("description"));
                 account.setBalance(rs.getFloat("balance"));
+                account.setCreditLine(rs.getFloat("creditLine"));
                 account.setBeginBalance(rs.getFloat("beginBalance"));
-                account.setBeginBalanceTimestamp(LocalDateTime.valueOf(rs.getTimestamp("beginBalanceTimesamp")));
+                account.setBeginBalanceTimestamp(LocalDateTime.parse((CharSequence) rs.getTimestamp("beginBalanceTimesamp")));
+                account.setType(AccountType.valueOf(rs.getString("type")));
+                accounts.put(account.getAccount_id(), account);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ModelDBImplementation.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        return account;
+        return accounts;
     }
 
     @Override
-    public void AccountMovement(Integer ida, Movement m) throws ExceptionManager{
-
+    public void accountMovement(Integer ida, Movement m) throws ExceptionManager{
+        con = connection.openConnection();
+        String insertMovement = "insert into movement(?,?,?,?,?,?)";
+        
+        try {
+            stmt = con.prepareStatement(insertMovement);
+            stmt.setInt(1, m.getMovement_id());
+            stmt.setFloat(2, m.getAmount());
+            stmt.setFloat(3, m.getBalance());
+            stmt.setString(4, m.getDescription());
+            Timestamp ts = Timestamp.valueOf(m.getTimeStamp());
+            stmt.setTimestamp(5, ts);
+            stmt.setInt(6, ida);
+        } catch (SQLException ex) {
+            String error = "Error en la conexion con la base de datos";
+            ExceptionManager exception = new ExceptionManager(error);
+            throw exception;
+        } finally {
+            try {
+                connection.closeConnection(stmt, con);
+            } catch (SQLException ex) {
+                String error = "Error al cerrar la base de datos";
+                ExceptionManager exception = new ExceptionManager(error);
+                throw exception;
+            }
+        }
     }
 
     @Override
-    public HashMap<Integer, Movement> CheckAccount_Movement(Integer ida) throws ExceptionManager{
+    public HashMap<Integer, Movement> checkAccount_Movement(Integer ida) throws ExceptionManager{
+        HashMap<Integer, Movement> movements = null;
+        return movements;
+    }
 
+    @Override
+    public Account checkAccount(Integer ida) throws ExceptionManager {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
