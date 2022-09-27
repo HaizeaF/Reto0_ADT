@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 /**
  *
- * @author 2dam
+ * @author Julen
  */
 public class Customer implements Serializable{
     private Integer customer_id;
@@ -41,6 +41,21 @@ public class Customer implements Serializable{
 
     public Customer() {
     }
+
+    public Customer(Integer customer_id, String firstName, String lastName, String middleInitial, String street, String city, String state, Integer zip, Integer phone, String email) {
+        this.customer_id = customer_id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.middleInitial = middleInitial;
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.phone = phone;
+        this.email = email;
+    }
+    
+    
     
 
     @Override

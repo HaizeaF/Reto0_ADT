@@ -38,6 +38,17 @@ public class Account implements Serializable {
         this.type = type;
         this.customers = customers;
     }
+
+    public Account(Integer account_id, String description, Float balance, Float creditLine, Float beginBalance, LocalDate beginBalanceTimestamp, AccountType type) {
+        this.account_id = account_id;
+        this.description = description;
+        this.balance = balance;
+        this.creditLine = creditLine;
+        this.beginBalance = beginBalance;
+        this.beginBalanceTimestamp = beginBalanceTimestamp;
+        this.type = type;
+    }
+    
     
     // <-- Getters and Setters -->
     public Integer getAccount_id() {
