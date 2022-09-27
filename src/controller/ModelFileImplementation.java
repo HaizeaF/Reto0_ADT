@@ -8,7 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Account;
@@ -22,7 +24,8 @@ import model.Movement;
 public class ModelFileImplementation implements ModelInterface {
 
     File customersFile = new File("customersFile.obj");
-    File accountFile = new File("accountFile.obj");
+    File accountsFile = new File("accountsFile.obj");
+    File movementsFile = new File("movementsFile.obj");
 
     FileOutputStream fos = null;
     ObjectOutputStream oos = null;
@@ -35,159 +38,32 @@ public class ModelFileImplementation implements ModelInterface {
 
         if (customersFile.exists()) {
             if (checkCustomer(c.getCustomer_id()) == null) {
-
                 try {
-
                     fos = new FileOutputStream(customersFile);
                     moos = new MyObjectOutputStream(fos);
 
                     moos.writeObject(c);
-
                 } catch (FileNotFoundException ex) {
-
+                    ex.getMessage();
                 } catch (IOException ex) {
-
+                    ex.getMessage();
+                } finally {
+                    try {
+                        fos.close();
+                        moos.close();
+                    } catch (IOException ex) {
+                        ex.getMessage();
+                    }
                 }
-
-                try {
-                    fos.close();
-                    moos.close();
-                } catch (IOException ex) {
-
-                }
-
             } else {
-                System.out.println("VACIO");
+                System.out.println("Customer exist");
             }
-
         } else {
             try {
-
                 fos = new FileOutputStream(customersFile);
                 oos = new ObjectOutputStream(oos);
 
                 oos.writeObject(c);
-
-            } catch (FileNotFoundException ex) {
-
-            } catch (IOException ex) {
-
-            }
-
-            try {
-                fos.close();
-                oos.close();
-            } catch (IOException ex) {
-
-            }
-        }
-
-    }
-
-    @Override
-    public Customer checkCustomer(Integer idc) {
-
-        Customer customer = null;
-
-        try {
-            fis = new FileInputStream(customersFile);
-            ois = new ObjectInputStream(fis);
-
-        } catch (FileNotFoundException ex) {
-
-        } catch (IOException ex) {
-
-        }
-
-        Integer cont = countFile(customersFile);
-
-        for (int i = 0; i < cont; i++) {
-            try {
-                customer = (Customer) ois.readObject();
-                if (idc == customer.getCustomer_id()) {
-                    i = cont;
-                    return customer;
-                }
-            } catch (IOException ex) {
-
-            } catch (ClassNotFoundException ex) {
-
-            }
-        }
-
-        try {
-            fos.close();
-            oos.close();
-        } catch (IOException ex) {
-
-        }
-
-        return customer;
-
-    }
-
-    @Override
-    public void createAccount(Account a, Integer idc) {
-        if (checkCustomer(idc) != null) {
-            HashMap<Integer,Customer> customersList;
-            Customer customer = checkCustomer(idc);
-            customersList = a.getCustomers();
-            customersList.put(idc, customer);
-            a.setCustomers(customersList);
-            if (accountFile.exists()) {
-                if (checkAccounts(idc).get(a.getAccount_id()) == null) {
-
-                    try {
-
-                        fos = new FileOutputStream(accountFile);
-                        moos = new MyObjectOutputStream(fos);
-
-                        moos.writeObject(a);
-
-                    } catch (FileNotFoundException ex) {
-
-                    } catch (IOException ex) {
-
-                    } finally {
-                        try {
-                        fos.close();
-                        moos.close();
-                        } catch (IOException ex) {
-
-                        }
-                    }
-                } else {
-                    System.out.println("Account exist");
-                }
-
-            } else {
-                try {
-
-                    fos = new FileOutputStream(accountFile);
-                    oos = new ObjectOutputStream(oos);
-                    oos.writeObject(a);
-
-                } catch (FileNotFoundException ex) {
-
-                } catch (IOException ex) {
-
-                }
-
-                try {
-                    fos.close();
-                    oos.close();
-                } catch (IOException ex) {
-
-                }
-            }
-            
-            try {
-                fos = new FileOutputStream(customersFile);
-                moos = new MyObjectOutputStream(fos);
-                
-                HashMap<Integer,Account> accountsList = customer.getAccounts();
-                accountsList.put(a.getAccount_id(), a);
-                customer.setAccounts(accountsList);
             } catch (FileNotFoundException ex) {
                 ex.getMessage();
             } catch (IOException ex) {
@@ -195,9 +71,82 @@ public class ModelFileImplementation implements ModelInterface {
             } finally {
                 try {
                     fos.close();
-                    moos.close();
+                    oos.close();
                 } catch (IOException ex) {
                     ex.getMessage();
+                }
+            }
+        }
+    }
+
+    @Override
+    public Customer checkCustomer(Integer idc) {
+        List<Object> customersList = new ArrayList<>();
+        fileToList(customersFile,customersList);
+        Customer customer = null;
+        for (int i = 0; i < customersList.size(); i++) {
+            if (((Customer)customersList.get(i)).getCustomer_id() == idc) {
+                customer = (Customer) customersList.get(i);
+            }
+        }
+        return customer;
+    }
+
+    @Override
+    public void createAccount(Account a, Integer idc) {
+        if (checkCustomer(idc) != null) {
+            HashMap<Integer, Customer> customersListAc;
+            Customer customer = checkCustomer(idc);
+            customersListAc = a.getCustomers();
+            customersListAc.put(idc, customer);
+            a.setCustomers(customersListAc);
+            
+            List<Object> customersList = new ArrayList<>();
+            if (accountsFile.exists()) {
+                if (checkAccount(a.getAccount_id()) == null) {
+                    try {
+                        fos = new FileOutputStream(accountsFile);
+                        moos = new MyObjectOutputStream(fos);
+
+                        moos.writeObject(a);
+                    } catch (FileNotFoundException ex) {
+                        ex.getMessage();
+                    } catch (IOException ex) {
+                        ex.getMessage();
+                    } finally {
+                        try {
+                            fos.close();
+                            moos.close();
+                        } catch (IOException ex) {
+                            ex.getMessage();
+                        }
+                    }
+                } else {
+                    System.out.println("Account exist");
+                }
+            } else {
+                try {
+                    fos = new FileOutputStream(accountsFile);
+                    oos = new ObjectOutputStream(oos);
+                    oos.writeObject(a);
+                } catch (FileNotFoundException ex) {
+                    ex.getMessage();
+                } catch (IOException ex) {
+                    ex.getMessage();
+                } finally {
+                    try {
+                        fos.close();
+                        oos.close();
+                    } catch (IOException ex) {
+                        ex.getMessage();
+                    }
+                }
+            }
+
+            fileToList(customersFile,customersList);
+            for (int i = 0; i < customersList.size(); i++) {
+                if (((Customer) customersList.get(i)).getCustomer_id() == idc) {
+                    
                 }
             }
         } else {
@@ -208,13 +157,58 @@ public class ModelFileImplementation implements ModelInterface {
 
     @Override
     public void addClient(Integer idc, Integer ida) {
-        if (customersFile.exists() && accountFile.exists()) {
+        if (customersFile.exists() && accountsFile.exists()) {
             if (checkCustomer(idc) != null && checkAccount(ida) != null) {
                 if (checkAccounts(idc).get(ida) == null) {
-                    
+                    Account account = checkAccount(ida);
+                    Customer customer = checkCustomer(idc);
+                    HashMap<Integer, Customer> customersList = account.getCustomers();
+                    HashMap<Integer, Account> accountsList = customer.getAccounts();
+
+                    customersList.put(idc, customer);
+                    accountsList.put(ida, account);
+
+                    try {
+                        fos = new FileOutputStream(accountsFile);
+                        oos = new ObjectOutputStream(oos);
+                        oos.writeObject(account);
+
+                    } catch (FileNotFoundException ex) {
+                        ex.getMessage();
+                    } catch (IOException ex) {
+                        ex.getMessage();
+                    } finally {
+                        try {
+                            fos.close();
+                            moos.close();
+                        } catch (IOException ex) {
+                            ex.getMessage();
+                        }
+                    }
+
+                    try {
+                        fos = new FileOutputStream(customersFile);
+                        oos = new ObjectOutputStream(oos);
+                        oos.writeObject(customer);
+
+                    } catch (FileNotFoundException ex) {
+                        ex.getMessage();
+                    } catch (IOException ex) {
+                        ex.getMessage();
+                    } finally {
+                        try {
+                            fos.close();
+                            moos.close();
+                        } catch (IOException ex) {
+                            ex.getMessage();
+                        }
+                    }
+
                 } else {
                     System.out.println("Client exist in Account");
                 }
+            } else {
+                System.out.println("No account/customer");
             }
         } else {
             System.out.println("No file");
@@ -222,13 +216,58 @@ public class ModelFileImplementation implements ModelInterface {
     }
 
     @Override
-    public HashMap<Integer,Account> checkAccounts(Integer ida) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public HashMap<Integer, Account> checkAccounts(Integer idc) {
+        Customer customer = checkCustomer(idc);
+        return customer.getAccounts();
     }
 
     @Override
     public void accountMovement(Integer ida, Movement m) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        m.setIdAccount(ida);
+
+        if (movementsFile.exists()) {
+            if (checkAccount_Movement(ida).get(m.getMovement_id()) == null) {
+                try {
+
+                    fos = new FileOutputStream(movementsFile);
+                    moos = new MyObjectOutputStream(fos);
+
+                    moos.writeObject(m);
+
+                } catch (FileNotFoundException ex) {
+                    ex.getMessage();
+                } catch (IOException ex) {
+                    ex.getMessage();
+                } finally {
+                    try {
+                        fos.close();
+                        moos.close();
+                    } catch (IOException ex) {
+                        ex.getMessage();
+                    }
+                }
+            } else {
+                System.out.println("Movement exist in account");
+            }
+        } else {
+            try {
+                fos = new FileOutputStream(movementsFile);
+                oos = new ObjectOutputStream(oos);
+                oos.writeObject(m);
+
+            } catch (FileNotFoundException ex) {
+                ex.getMessage();
+            } catch (IOException ex) {
+                ex.getMessage();
+            } finally {
+                try {
+                    fos.close();
+                    oos.close();
+                } catch (IOException ex) {
+                    ex.getMessage();
+                }
+            }
+        }
     }
 
     @Override
@@ -236,7 +275,7 @@ public class ModelFileImplementation implements ModelInterface {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private Integer countFile(File customersFile) {
+    private static Integer countFile(File customersFile) {
 
         int cont = 0;
         if (customersFile.exists()) {
@@ -274,4 +313,39 @@ public class ModelFileImplementation implements ModelInterface {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    private static void listToFile(List<Object> list, File file) {
+        ObjectOutputStream oos = null;
+
+        try {
+            oos = new ObjectOutputStream(new FileOutputStream(file));
+            for (int i = 0; i < list.size(); i++) {
+                oos.writeObject(list.get(i));
+            }
+        } catch (IOException ex) {
+            ex.getMessage();
+        } finally {
+            try {
+                oos.close();
+            } catch (IOException ex) {
+                ex.getMessage();
+            }
+        }
+    }
+
+    private static void fileToList(File file, List<Object> list) {
+        ObjectInputStream ois = null;
+        Object obj;
+        Integer cont = countFile(file);
+
+        for (int i = 0; i < cont; i++) {
+            try {
+                obj = ois.readObject();
+                list.add(obj);
+            } catch (IOException ex) {
+                ex.getMessage();
+            } catch (ClassNotFoundException ex) {
+                ex.getMessage();
+            }
+        }
+    }
 }
