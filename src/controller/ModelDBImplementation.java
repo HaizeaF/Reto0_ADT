@@ -203,7 +203,7 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public void accountMovement(Integer ida, Movement m) throws ExceptionManager{
+    public void accountMovement(Movement m) throws ExceptionManager{
         con = connection.openConnection();
         String insertMovement = "insert into movement(?,?,?,?,?,?)";
         
@@ -215,7 +215,7 @@ public class ModelDBImplementation implements ModelInterface {
             stmt.setString(4, m.getDescription());
             Timestamp ts = Timestamp.valueOf(m.getTimeStamp());
             stmt.setTimestamp(5, ts);
-            stmt.setInt(6, ida);
+            stmt.setInt(6, m.getIdAccount());
         } catch (SQLException ex) {
             String error = "Error en la conexion con la base de datos";
             ExceptionManager exception = new ExceptionManager(error);
@@ -233,13 +233,81 @@ public class ModelDBImplementation implements ModelInterface {
 
     @Override
     public HashMap<Integer, Movement> checkAccount_Movement(Integer ida) throws ExceptionManager{
-        HashMap<Integer, Movement> movements = null;
+        HashMap<Integer, Movement> movements = new HashMap<>();
+        Movement mv = null;
+        ResultSet rs = null;
+        
+        String checkMovements = "select m.* from account a, movement m where a.id=m.account_id and a.id=?";
+        con = connection.openConnection();
+        
+        try {
+            stmt = con.prepareStatement(checkMovements);
+            stmt.setInt(1, ida);
+            rs = stmt.executeQuery();
+            
+            while (rs.next()){
+                mv = new Movement();
+                mv.setMovement_id(rs.getInt("id"));
+                mv.setTimeStamp(LocalDateTime.parse((CharSequence) rs.getTimestamp("timestamp")));
+                mv.setAmount(rs.getFloat("amunt"));
+                mv.setBalance(rs.getFloat("balance"));
+                mv.setDescription(rs.getString("description"));
+                mv.setIdAccount(rs.getInt("account_id"));
+                movements.put(mv.getMovement_id(), mv);
+            }
+        } catch (SQLException ex) {
+            String error = "Error en la conexion con la base de datos";
+            ExceptionManager exception = new ExceptionManager(error);
+            throw exception;
+        } finally {
+            try {
+                connection.closeConnection(stmt, con);
+            } catch (SQLException ex) {
+                String error = "Error al cerrar la base de datos";
+                ExceptionManager exception = new ExceptionManager(error);
+                throw exception;
+            }
+        }
         return movements;
     }
 
     @Override
     public Account checkAccount(Integer ida) throws ExceptionManager {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Account account = null;
+        ResultSet rs = null;
+        
+        String checkAccount = "SELECT * FROM account a where id=?";
+        con = connection.openConnection();
+        
+        try {
+            stmt = con.prepareStatement(checkAccount);
+            stmt.setInt(1, ida);
+            rs = stmt.executeQuery();
+            
+            if (rs.next()){
+                account = new Account();
+                account.setAccount_id(rs.getInt("id"));
+                account.setDescription(rs.getString("description"));
+                account.setBalance(rs.getFloat("balance"));
+                account.setCreditLine(rs.getFloat("creditLine"));
+                account.setBeginBalance(rs.getFloat("beginBalance"));
+                account.setBeginBalanceTimestamp(LocalDateTime.parse((CharSequence) rs.getTimestamp("beginBalanceTimesamp")));
+                account.setType(AccountType.valueOf(rs.getString("type")));
+            }
+        } catch (SQLException ex) {
+            String error = "Error en la conexion con la base de datos";
+            ExceptionManager exception = new ExceptionManager(error);
+            throw exception;
+        } finally {
+            try {
+                connection.closeConnection(stmt, con);
+            } catch (SQLException ex) {
+                String error = "Error al cerrar la base de datos";
+                ExceptionManager exception = new ExceptionManager(error);
+                throw exception;
+            }
+        }
+        return account;
     }
 
 }
