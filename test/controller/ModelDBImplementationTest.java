@@ -9,12 +9,6 @@ import java.util.HashMap;
 import model.Account;
 import model.Customer;
 import model.Movement;
-/*
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-*/
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -23,26 +17,10 @@ import static org.junit.Assert.*;
  * @author 2dam
  */
 public class ModelDBImplementationTest {
-    /*
+    
     public ModelDBImplementationTest() {
     }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    */
+
     /**
      * Test of createCustomer method, of class ModelDBImplementation.
      */
@@ -120,10 +98,9 @@ public class ModelDBImplementationTest {
     @Test
     public void testAccountMovement() throws Exception {
         System.out.println("accountMovement");
-        Integer ida = null;
         Movement m = null;
         ModelDBImplementation instance = new ModelDBImplementation();
-        instance.accountMovement(ida, m);
+        instance.accountMovement(m);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
