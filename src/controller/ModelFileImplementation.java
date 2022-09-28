@@ -38,7 +38,7 @@ public class ModelFileImplementation implements ModelInterface {
     }
 
     @Override
-    public void accountMovement(Integer ida, Movement m) {
+    public void accountMovement(Movement m) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
