@@ -19,9 +19,10 @@ import utilidades.Utilidades;
  */
 public class BankADT{
     
-    private static ModelInterface mi = new ModelFileImplementation();
-    
     public static void main(String[] args) {
+        
+        ModelInterface mi = new ModelFileImplementation();
+        
         Integer opcion = 0;
 
         System.out.println("1.Create customer \n2.Check the data \n3.Check the accounts of a customer "
@@ -56,9 +57,16 @@ public class BankADT{
     private static void createCustomer(ModelInterface mi) {
         
         Customer customer;
+        Customer checkCustomer = null;
         
         System.out.println("Introduce the id of the new Customer: ");
         Integer account_id = Utilidades.leerInt();
+        
+        mi.checkCustomer(account_id);
+        if(checkCustomer.getCustomer_id().equals(account_id)){
+            System.out.println("error");
+        }
+        
         System.out.println("Introduce the first name of the Customer: ");
         String firstName = Utilidades.introducirCadena();
         System.out.println("Introduce the last name of the Customer: ");
@@ -72,18 +80,18 @@ public class BankADT{
         System.out.println("Introduce the state of the Customer: ");
         String state = Utilidades.introducirCadena();
         System.out.println("Introduce the zip of the Customer: ");
-        String zip = Utilidades.introducirCadena();
+        Integer zip = Utilidades.leerInt();
         System.out.println("Introduce the phone of the Customer: ");
         Integer phone = Utilidades.leerInt();
         System.out.println("Introduce the email of the Customer: ");
         String email = Utilidades.introducirCadena();
         
         customer = new Customer(account_id, firstName, lastName, middleInitial, street, city, state, account_id, account_id, email);
-        mi.CreateCustomer(customer);
+        mi.createCustomer(customer);
         
     }
 
-    private static void createAccount(ModelInterface mi1) {
+    private static void createAccount(ModelInterface mi) {
         
         
         Account account;
@@ -93,7 +101,7 @@ public class BankADT{
         
         System.out.println("Introduce the id of the Customer: ");
         Integer customer_id = Utilidades.leerInt();
-        customer = mi.CheckCustomer(customer_id);
+        customer = mi.checkCustomer(customer_id);
 
         System.out.println("Introduce the id of the new Account: ");
         Integer account_id = Utilidades.leerInt();
@@ -121,7 +129,7 @@ public class BankADT{
 
         account = new Account(account_id, description, balance, creditLine, beginBalance, beginBalanceTimestamp, type);
         
-        mi.CreateAccount(account, customer.getCustomer_id());
+        mi.createAccount(account, customer.getCustomer_id());
     }
 
     

@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author Julen
@@ -9,23 +10,25 @@ import java.time.LocalDate;
 public class Movement implements Serializable{
     //Atributtes
     private Integer movement_id;
-    private LocalDate timeStamp;
+    private LocalDateTime timeStamp;
     private Float amount;
     private Float balance;
     private String description;
-    
+    private Integer idAccount;
+
     //Constructors
     public Movement() {
     }
 
-    public Movement(Integer movement_id, LocalDate timeStamp, Float amount, Float balance, String description) {
+    public Movement(Integer movement_id, LocalDateTime timeStamp, Float amount, Float balance, String description, Integer idAccount) {
         this.movement_id = movement_id;
         this.timeStamp = timeStamp;
         this.amount = amount;
         this.balance = balance;
         this.description = description;
+        this.idAccount = idAccount;
     }
-    
+
     //getter and setters
     public Integer getMovement_id() {
         return movement_id;
@@ -35,11 +38,11 @@ public class Movement implements Serializable{
         this.movement_id = movement_id;
     }
 
-    public LocalDate getTimeStamp() {
+    public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(LocalDate timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -66,4 +69,13 @@ public class Movement implements Serializable{
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Integer getIdAccount() {
+        return idAccount;
+    }
+
+    public void setIdAccount(Integer idAccount) {
+        this.idAccount = idAccount;
+    }
+
 }
