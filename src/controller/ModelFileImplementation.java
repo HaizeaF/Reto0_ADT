@@ -23,7 +23,7 @@ public class ModelFileImplementation implements ModelInterface {
     }
 
     @Override
-    public void CreateAccount(Account a, Integer idc) {
+    public void createAccount(Account a, Integer idc) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -44,11 +44,6 @@ public class ModelFileImplementation implements ModelInterface {
 
     @Override
     public HashMap<Integer, Movement> checkAccount_Movement(Integer ida) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void createAccount(Account a) throws ExceptionManager {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
