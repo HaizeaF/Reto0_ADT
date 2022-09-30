@@ -77,5 +77,4 @@ public class Movement implements Serializable{
     public void setIdAccount(Integer idAccount) {
         this.idAccount = idAccount;
     }
-    
 }
