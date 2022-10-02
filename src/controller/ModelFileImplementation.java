@@ -232,6 +232,7 @@ public class ModelFileImplementation implements ModelInterface {
         return movementsListAccount;
     }
 
+
     private static Integer countFile(File customersFile) {
 
         int cont = 0;
@@ -313,6 +314,5 @@ public class ModelFileImplementation implements ModelInterface {
         } catch (ClassNotFoundException ex) {
             ex.getMessage();
         }
-
     }
 }
