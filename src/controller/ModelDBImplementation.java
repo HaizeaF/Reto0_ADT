@@ -33,7 +33,7 @@ public class ModelDBImplementation implements ModelInterface {
     @Override
     public void createCustomer(Customer c) throws ExceptionManager {
         con = connection.openConnection();
-        String insertCustomer = "insert into customer(?,?,?,?,?,?,?,?,?,?)";
+        String insertCustomer = "insert into customer values(?,?,?,?,?,?,?,?,?,?)";
 
         try {
             stmt = con.prepareStatement(insertCustomer);
@@ -50,7 +50,9 @@ public class ModelDBImplementation implements ModelInterface {
 
             stmt.executeUpdate();
         } catch (SQLException ex) {
+            ex.getMessage();
             String error = "Error en la conexion con la base de datos";
+
             ExceptionManager exception = new ExceptionManager(error);
             throw exception;
         } finally {
@@ -66,19 +68,19 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public Customer checkCustomer(Integer idc) throws ExceptionManager{
+    public Customer checkCustomer(Integer idc) throws ExceptionManager {
         ResultSet rs = null;
         Customer customer = null;
-        
+
         String checkCustomer = "select c.* from customer c where id = ?";
         con = connection.openConnection();
-        
+
         try {
             stmt = con.prepareStatement(checkCustomer);
             stmt.setInt(1, idc);
             rs = stmt.executeQuery();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 customer = new Customer();
                 customer.setCustomer_id(idc);
                 customer.setCity(rs.getString("city"));
@@ -91,8 +93,7 @@ public class ModelDBImplementation implements ModelInterface {
                 customer.setStreet(rs.getString("street"));
                 customer.setZip(rs.getInt("zip"));
             }
-            
-            
+
         } catch (SQLException ex) {
             String error = "Error en la conexion con la base de datos";
             ExceptionManager exception = new ExceptionManager(error);
@@ -106,15 +107,15 @@ public class ModelDBImplementation implements ModelInterface {
                 throw exception;
             }
         }
-        
+
         return customer;
     }
 
     @Override
-    public void createAccount(Account a, Integer idc) throws ExceptionManager{
+    public void createAccount(Account a, Integer idc) throws ExceptionManager {
         con = connection.openConnection();
-        String insertAccount = "insert into account(?,?,?,?,?,?,?)";
-        
+        String insertAccount = "insert into account values(?,?,?,?,?,?,?)";
+
         try {
             stmt = con.prepareStatement(insertAccount);
             stmt.setInt(1, a.getAccount_id());
@@ -124,19 +125,24 @@ public class ModelDBImplementation implements ModelInterface {
             stmt.setTimestamp(4, ts);
             stmt.setFloat(5, a.getCreditLine());
             stmt.setString(6, a.getDescription());
-            stmt.setInt(7, Integer.valueOf(String.valueOf(a.getType())));
+            if (a.getType().equals(AccountType.STANDARD)) {
+                stmt.setInt(7, 0);
+            } else {
+                stmt.setInt(7, 1);
+            }
             stmt.executeUpdate();
         } catch (SQLException ex) {
-           String error = "Error en la conexion con la base de datos";
+            String error = "Error en la conexion con la base de datos";
             ExceptionManager exception = new ExceptionManager(error);
             throw exception;
         } finally {
             try {
-                String insertCustomerAccount = "insert into customer_account(?,?)";
+                String insertCustomerAccount = "insert into customer_account values(?,?)";
                 stmt = con.prepareStatement(insertCustomerAccount);
-                stmt.setInt(1, a.getAccount_id());
-                stmt.setInt(2, idc);
-                connection.closeConnection(stmt, con); 
+                stmt.setInt(1, idc);
+                stmt.setInt(2, a.getAccount_id());
+                stmt.executeUpdate();
+                connection.closeConnection(stmt, con);
             } catch (SQLException e) {
                 String error = "Error al cerrar la base de datos";
                 ExceptionManager exception = new ExceptionManager(error);
@@ -146,17 +152,17 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public void addCustomer(Integer idc, Integer ida) throws ExceptionManager{
+    public void addCustomer(Integer idc, Integer ida) throws ExceptionManager {
         con = connection.openConnection();
         String addClient = "insert into customer_account values (?,?)";
-        
+
         try {
             stmt = con.prepareStatement(addClient);
             stmt.setInt(1, idc);
             stmt.setInt(2, ida);
             stmt.executeUpdate();
         } catch (SQLException ex) {
-           String error = "Error en la conexion con la base de datos";
+            String error = "Error en la conexion con la base de datos";
             ExceptionManager exception = new ExceptionManager(error);
             throw exception;
         } finally {
@@ -171,42 +177,46 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public HashMap<Integer, Account> checkAccounts(Integer idc) throws ExceptionManager{
+    public HashMap<Integer, Account> checkAccounts(Integer idc) throws ExceptionManager {
         ResultSet rs = null;
         Account account = null;
         HashMap<Integer, Account> accounts = new HashMap<>();
-        
+
         con = connection.openConnection();
         String checkAccount = "SELECT a.* FROM account a, customer_account ca WHERE a.id=ca.accounts_id and ca.customers_id=?";
-        
+
         try {
             stmt = con.prepareStatement(checkAccount);
             stmt.setInt(1, idc);
             rs = stmt.executeQuery();
-            
-            while(rs.next()){
+
+            while (rs.next()) {
                 account = new Account();
                 account.setAccount_id(rs.getInt("id"));
                 account.setDescription(rs.getString("description"));
                 account.setBalance(rs.getFloat("balance"));
                 account.setCreditLine(rs.getFloat("creditLine"));
                 account.setBeginBalance(rs.getFloat("beginBalance"));
-                account.setBeginBalanceTimestamp(LocalDateTime.parse((CharSequence) rs.getTimestamp("beginBalanceTimesamp")));
-                account.setType(AccountType.valueOf(rs.getString("type")));
+                account.setBeginBalanceTimestamp(rs.getTimestamp("beginBalanceTimestamp").toLocalDateTime());
+                if (rs.getInt("type") == 0) {
+                    account.setType(AccountType.STANDARD);
+                } else {
+                    account.setType(AccountType.CREDIT);
+                }
                 accounts.put(account.getAccount_id(), account);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ModelDBImplementation.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return accounts;
     }
 
     @Override
-    public void accountMovement(Integer ida, Movement m) throws ExceptionManager{
+    public void accountMovement(Integer ida, Movement m) throws ExceptionManager {
         con = connection.openConnection();
-        String insertMovement = "insert into movement(?,?,?,?,?,?)";
-        
+        String insertMovement = "insert into movement values(?,?,?,?,?,?)";
+
         try {
             stmt = con.prepareStatement(insertMovement);
             stmt.setInt(1, m.getMovement_id());
@@ -216,6 +226,7 @@ public class ModelDBImplementation implements ModelInterface {
             Timestamp ts = Timestamp.valueOf(m.getTimeStamp());
             stmt.setTimestamp(5, ts);
             stmt.setInt(6, m.getIdAccount());
+            stmt.executeUpdate();
         } catch (SQLException ex) {
             String error = "Error en la conexion con la base de datos";
             ExceptionManager exception = new ExceptionManager(error);
@@ -232,24 +243,24 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public HashMap<Integer, Movement> checkAccount_Movement(Integer ida) throws ExceptionManager{
+    public HashMap<Integer, Movement> checkAccount_Movement(Integer ida) throws ExceptionManager {
         HashMap<Integer, Movement> movements = new HashMap<>();
         Movement mv = null;
         ResultSet rs = null;
-        
+
         String checkMovements = "select m.* from account a, movement m where a.id=m.account_id and a.id=?";
         con = connection.openConnection();
-        
+
         try {
             stmt = con.prepareStatement(checkMovements);
             stmt.setInt(1, ida);
             rs = stmt.executeQuery();
-            
-            while (rs.next()){
+
+            while (rs.next()) {
                 mv = new Movement();
                 mv.setMovement_id(rs.getInt("id"));
-                mv.setTimeStamp(LocalDateTime.parse((CharSequence) rs.getTimestamp("timestamp")));
-                mv.setAmount(rs.getFloat("amunt"));
+                mv.setTimeStamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                mv.setAmount(rs.getFloat("amount"));
                 mv.setBalance(rs.getFloat("balance"));
                 mv.setDescription(rs.getString("description"));
                 mv.setIdAccount(rs.getInt("account_id"));
@@ -275,24 +286,28 @@ public class ModelDBImplementation implements ModelInterface {
     public Account checkAccount(Integer ida) throws ExceptionManager {
         Account account = null;
         ResultSet rs = null;
-        
+
         String checkAccount = "SELECT * FROM account a where id=?";
         con = connection.openConnection();
-        
+
         try {
             stmt = con.prepareStatement(checkAccount);
             stmt.setInt(1, ida);
             rs = stmt.executeQuery();
-            
-            if (rs.next()){
+
+            if (rs.next()) {
                 account = new Account();
                 account.setAccount_id(rs.getInt("id"));
                 account.setDescription(rs.getString("description"));
                 account.setBalance(rs.getFloat("balance"));
                 account.setCreditLine(rs.getFloat("creditLine"));
                 account.setBeginBalance(rs.getFloat("beginBalance"));
-                account.setBeginBalanceTimestamp(LocalDateTime.parse((CharSequence) rs.getTimestamp("beginBalanceTimesamp")));
-                account.setType(AccountType.valueOf(rs.getString("type")));
+                account.setBeginBalanceTimestamp(rs.getTimestamp("beginBalanceTimestamp").toLocalDateTime());
+                if (rs.getInt("type") == 0) {
+                    account.setType(AccountType.STANDARD);
+                } else {
+                    account.setType(AccountType.CREDIT);
+                }
             }
         } catch (SQLException ex) {
             String error = "Error en la conexion con la base de datos";

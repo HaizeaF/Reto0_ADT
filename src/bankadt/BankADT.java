@@ -151,9 +151,9 @@ public class BankADT {
             checkCustomer = mi.checkCustomer(customer_id);
         }
 
-        accountsList = checkCustomer.getAccounts();
+        accountsList = mi.checkAccounts(customer_id);
 
-        if (checkCustomer.getAccounts().size() > 0) {
+        if (accountsList.size() > 0) {
             for (Account a : accountsList.values()) {
                 System.out.println("Account id " + cont + ": " + a.getAccount_id());
                 cont++;
@@ -291,7 +291,6 @@ public class BankADT {
         System.out.println("Introduce the amount of CASH the movement has: ");
         Float amount = Utilidades.leerFloat();
         System.out.println("The actual balance of the Account is: ");
-        //DAR UNA VUELTA
         Float balance = checkAccount.getBalance();
         Float finalBalance = balance + amount;
         System.out.println(finalBalance);
