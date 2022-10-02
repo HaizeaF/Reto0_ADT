@@ -16,16 +16,16 @@ import model.AccountType;
 import model.Customer;
 import model.Movement;
 import utilidades.Utilidades;
+import controller.*;
+import java.util.ResourceBundle;
 
 /**
  *
  * @author Julen
  */
 public class BankADT {
-
     public static void main(String[] args) throws ExceptionManager {
-
-        ModelInterface mi = new ModelFileImplementation();
+        ModelInterface mi = createModelInterface();
 
         Integer opcion = 0;
         do {
@@ -341,5 +341,15 @@ public class BankADT {
             }
         }
         return false;
+    }
+    
+    public static ModelInterface createModelInterface(){
+        ResourceBundle configfile = ResourceBundle.getBundle("controller.config");
+        String s = configfile.getString("MODEL");
+        if(s.equalsIgnoreCase("file")){
+            return new ModelFileImplementation();
+        }else{
+            return new ModelDBImplementation();
+        }
     }
 }

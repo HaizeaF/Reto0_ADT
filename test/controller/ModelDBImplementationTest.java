@@ -67,12 +67,12 @@ public class ModelDBImplementationTest {
      * Test of addClient method, of class ModelDBImplementation.
      */
     @Test
-    public void testAddClient() throws Exception {
+    public void testAddCustomer() throws Exception {
         System.out.println("addClient");
         Integer idc = null;
         Integer ida = null;
         ModelDBImplementation instance = new ModelDBImplementation();
-        instance.addClient(idc, ida);
+        instance.addCustomer(idc, ida);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -98,9 +98,10 @@ public class ModelDBImplementationTest {
     @Test
     public void testAccountMovement() throws Exception {
         System.out.println("accountMovement");
+        Integer a = null;
         Movement m = null;
         ModelDBImplementation instance = new ModelDBImplementation();
-        instance.accountMovement(m);
+        instance.accountMovement(a, m);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
