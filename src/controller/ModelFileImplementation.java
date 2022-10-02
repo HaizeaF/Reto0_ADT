@@ -236,6 +236,39 @@ public class ModelFileImplementation implements ModelInterface {
         return movementsListAccount;
     }
 
+    private static Integer countFile(File customersFile) {
+
+        int cont = 0;
+        if (customersFile.exists()) {
+            FileInputStream fis = null;
+            ObjectInputStream ois = null;
+            try {
+                fis = new FileInputStream(customersFile);
+                ois = new ObjectInputStream(fis);
+
+                Object aux = ois.readObject();
+
+                while (aux != null) {
+                    cont++;
+                    aux = ois.readObject();
+                }
+
+            } catch (EOFException e1) {
+
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+
+            try {
+                ois.close();
+                fis.close();
+            } catch (IOException e) {
+
+            }
+        }
+        return cont;
+    }
+
     @Override
     public Account checkAccount(Integer ida) throws ExceptionManager {
         List<Object> accountsList = new ArrayList<>();
@@ -282,6 +315,5 @@ public class ModelFileImplementation implements ModelInterface {
         } catch (IOException | ClassNotFoundException ex) {
             ex.getMessage();
         }
-
     }
 }
