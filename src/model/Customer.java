@@ -13,6 +13,8 @@ import java.util.HashMap;
  * @author 2dam
  */
 public class Customer implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
     private Integer customer_id;
     private String firstName;
     private String lastName;
@@ -40,6 +42,11 @@ public class Customer implements Serializable{
     }
 
     public Customer() {
+        accounts = new HashMap<>();
+    }
+
+    public Customer(Integer account_id, String firstName, String lastName, String middleInitial, String street, String city, String state, Integer account_id0, Integer account_id1, String email) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
  * @author Julen
  */
 public class Movement implements Serializable{
+    private static final long serialVersionUID = 1L;
     //Atributtes
     private Integer movement_id;
     private LocalDateTime timeStamp;

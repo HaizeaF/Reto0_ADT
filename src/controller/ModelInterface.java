@@ -19,7 +19,7 @@ public interface ModelInterface {
     public void createCustomer(Customer c)throws ExceptionManager;
     public Customer checkCustomer(Integer idc)throws ExceptionManager;
     public void createAccount(Account a, Integer idc)throws ExceptionManager;
-    public void addClient(Integer idc, Integer ida)throws ExceptionManager;
+    public void addCustomer(Integer idc, Integer ida)throws ExceptionManager;
     public HashMap<Integer, Account> checkAccounts(Integer idc)throws ExceptionManager;
     public void accountMovement(Integer ida, Movement m)throws ExceptionManager;
     public Account checkAccount(Integer ida) throws ExceptionManager;
