@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
@@ -303,6 +304,26 @@ public class Utilidades {
                 date = LocalDate.parse(dateString, formato);
             } catch (DateTimeParseException e) {
                 System.out.println("Error, introduce una fecha en formato aaaa/MM/dd");
+                error = true;
+            }
+        } while (error);
+
+        return date;
+    }
+    
+    public static LocalDateTime leerFechaYHoraDMA() {
+        LocalDateTime date = null;
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String dateString;
+        boolean error;
+
+        do {
+            dateString = introducirCadena();
+            error = false;
+            try {
+                date = LocalDateTime.parse(dateString, formato);
+            } catch (DateTimeParseException e) {
+                System.out.println("Error, introduce una fecha en formato dd/mm/aaaa HH:mm:ss");
                 error = true;
             }
         } while (error);

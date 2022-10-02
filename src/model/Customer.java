@@ -10,9 +10,11 @@ import java.util.HashMap;
 
 /**
  *
- * @author Julen
+ * @author 2dam
  */
 public class Customer implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
     private Integer customer_id;
     private String firstName;
     private String lastName;
@@ -40,6 +42,7 @@ public class Customer implements Serializable{
     }
 
     public Customer() {
+        accounts = new HashMap<>();
     }
 
     public Customer(Integer customer_id, String firstName, String lastName, String middleInitial, String street, String city, String state, Integer zip, Integer phone, String email) {
@@ -54,8 +57,7 @@ public class Customer implements Serializable{
         this.phone = phone;
         this.email = email;
     }
-    
-    
+
     
 
     @Override

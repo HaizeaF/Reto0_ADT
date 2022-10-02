@@ -18,7 +18,7 @@ public interface ModelInterface {
     public void createCustomer(Customer c);
     public Customer checkCustomer(Integer idc);
     public void createAccount(Account a, Integer idc);
-    public void addClient(Integer idc, Integer ida);
+    public void addCustomer(Integer idc, Integer ida);
     public HashMap<Integer, Account> checkAccounts(Integer idc);
     public void accountMovement(Integer ida, Movement m);
     public Account checkAccount(Integer ida);
