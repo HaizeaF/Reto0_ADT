@@ -15,6 +15,7 @@ import java.util.HashMap;
  * @author 2dam
  */
 public class Account implements Serializable {
+    private static final long serialVersionUID = 1L;
     // <-- Attributes -->
     private Integer account_id;
     private String description;
@@ -27,6 +28,7 @@ public class Account implements Serializable {
     
     // <-- Constructors -->
     public Account() {
+        customers = new HashMap<>();
     }
 
     public Account(Integer account_id, String description, Float balance, Float creditLine, Float beginBalance, LocalDateTime beginBalanceTimestamp, AccountType type, HashMap<Integer, Customer> customers) {

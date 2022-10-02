@@ -146,7 +146,7 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public void addClient(Integer idc, Integer ida) throws ExceptionManager{
+    public void addCustomer(Integer idc, Integer ida) throws ExceptionManager{
         con = connection.openConnection();
         String addClient = "insert into customer_account values (?,?)";
         
@@ -203,7 +203,7 @@ public class ModelDBImplementation implements ModelInterface {
     }
 
     @Override
-    public void accountMovement(Movement m) throws ExceptionManager{
+    public void accountMovement(Integer ida, Movement m) throws ExceptionManager{
         con = connection.openConnection();
         String insertMovement = "insert into movement(?,?,?,?,?,?)";
         
